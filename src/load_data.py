@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import SMOTE
 
 def load_data():
-    df = pd.read_csv('../data/transaction_dataset.csv')
+    df = pd.read_csv('data/transaction_dataset.csv')
     df = df.dropna()
     
     # Separate features and target
