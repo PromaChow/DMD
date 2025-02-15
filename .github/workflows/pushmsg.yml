@@ -1,35 +1,84 @@
-name: Changes Received
-
+name: AWS ML Pipeline
 on:
   push:
     branches:
-      - vampbrain-patch-1
+      - main
 
 jobs:
   my-job:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          task: start-measurement
       - name: Check out code
         uses: actions/checkout@v2
+      - id: commit_info
+        name: Get pusher's name and commit message
+        run: 'USER=$(git log -1 --pretty=format:''%an'')
 
-      - name: Get pusher's name and commit message
-        id: commit_info
-        run: |
-          USER=$(git log -1 --pretty=format:'%an')
-          MESSAGE=$(git log -1 --pretty=format:'%s')
+          MESSAGE=$(git log -1 --pretty=format:''%s'')
+
           echo "::set-output name=user::$USER"
+
           echo "::set-output name=message::$MESSAGE"
+
+          '
+      - id: measurement-3
+        name: Record Measurement After Get pusher's name and commit message
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          label: Get pusher's name and commit message
+          task: get-measurement
       - name: Append to README
-        run: |
-          USER=${{ steps.commit_info.outputs.user }}
+        run: 'USER=${{ steps.commit_info.outputs.user }}
+
           MESSAGE=${{ steps.commit_info.outputs.message }}
+
           echo "Pushed by: $USER" >> README.md
+
           echo "Commit Message: $MESSAGE" >> README.md
+
+          '
+      - id: measurement-5
+        name: Record Measurement After Append to README
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          label: Append to README
+          task: get-measurement
       - name: Commit and push changes
-        run: |
-          git config --global user.name "GitHub Actions"
+        run: 'git config --global user.name "GitHub Actions"
+
           git config --global user.email "actions@github.com"
+
           git add README.md
-          git commit -m "Add pusher's name and commit message"
+
+          git commit -m "Add pusher''s name and commit message"
+
           git push
+
+          '
+      - id: measurement-7
+        name: Record Measurement After Commit and push changes
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          label: Commit and push changes
+          task: get-measurement
+      - id: display-measurement
+        name: Display Energy Results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          json-output: true
+          task: display-results
+      - name: Save Total Energy Consumption Data
+        run: echo '${{ steps.final-measurement.outputs.data-total-json }}' > total_energy_consumption.json
+      - name: Upload Energy Consumption Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: total-energy-consumption
+          path: total_energy_consumption.json
