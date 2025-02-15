@@ -1,6 +1,6 @@
 name: AWS ML Pipeline
 on:
-  push:
+  pull_request:
     branches:
       - main
 

@@ -1,4 +1,4 @@
-name: AWS ML Pipeline
+name: ML Pipeline
 on:
   push:
     branches:
@@ -76,7 +76,8 @@ jobs:
           label: Load Dataset
           task: get-measurement
       - name: Train Model
-        run: python src/train.py --epochs ${{ inputs.Epochs }} --lr ${{ inputs.LR
+        run:
+          python src/train.py --epochs ${{ inputs.Epochs }} --lr ${{ inputs.LR
           }}
       - id: measurement-8
         name: Record Measurement After Train Model
